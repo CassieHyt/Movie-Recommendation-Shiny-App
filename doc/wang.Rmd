@@ -44,6 +44,23 @@ for(i in 2:length(nopop_hrated)){
 ```
 
 ```{r}
+link <- NULL
+for(i in 1:50){
+  
+  omdb_info <- search_by_title(trimws(top50[i], which = "both"))$Poster[1]
+  
+  if(is.null(omdb_info) == TRUE){
+    link[i] <- NA
+  } else{
+    link[i] <- omdb_info
+  }
+}
+top50 <- data.frame(top50)
+top50$link <- link
+
+```
+
+```{r}
 library(omdbapi)
 library(dplyr)
 library(rvest)
@@ -56,7 +73,7 @@ poster <- lego_movie %>%
   html_attr("src")
 poster
 
-A <- find_by_title("Game of Thrones", type="series", season=1, episode=1)
+A <- find_by_title("Everyone says I love you")
 
 A$imdbRating
 A$Plot
@@ -72,11 +89,9 @@ plot(0:1,0:1,type="n",ann=FALSE,axes=FALSE)
 ah <- rasterImage(pic,0,0,1,1)
 
 
-```
-```{r}
-
 
 ```
+
 
 ## Shiny app
 ```{r}
@@ -85,6 +100,7 @@ library(dplyr)
 library(rvest)
 library(RCurl)
 library(jpeg)
+library(shinyBS)
 library(shiny)
 library(shinydashboard)
 
@@ -93,7 +109,8 @@ ui <- dashboardPage(
   
   dashboardSidebar(
     sidebarMenu(
-      menuItem("Dashboard", tabName = "dashboard", icon = icon("dashboard"))
+      menuItem("Movies View", tabName = "dashboard", icon = icon("film", lib="font-awesome")),
+      menuItem("Movies", tabName = "movies",icon = icon("film", lib="font-awesome") )
     )
   ),
   
@@ -134,16 +151,13 @@ ui <- dashboardPage(
                 box(title = "Not popular but great movies",
                     status = "danger",
                     solidHeader = T,
-                    verbatimTextOutput("nopop_hrated"))
-                
-                
-                
-                )
-              )
+                    verbatimTextOutput("nopop_hrated")) )),
       
-    )
-  )
-
+      tabItem(tabName = "movies",
+              uiOutput("tiles"))
+              
+        )
+      )
 
 server <- function(input, output) { 
 
@@ -156,8 +170,78 @@ server <- function(input, output) {
   output$top4 <- renderPlot({showposter("Mighty Aphroditee")})
   output$top5 <- renderPlot({showposter("Snow White and the Seven Dwarfs ")})
   
+  output$tiles <- renderUI({
+    fluidRow(
+      column(12, id="columns",
+        box(width=NULL,
+            title = "Hello")
+         ))
+       
+    
+    })
+  
   }
 
 shinyApp(ui = ui, server = server)
+```
 
+```{r}
+library(omdbapi)
+library(dplyr)
+library(rvest)
+library(RCurl)
+library(jpeg)
+library(shinyBS)
+library(shiny)
+library(shinydashboard)
+
+ui <- dashboardPage(
+  dashboardHeader(),
+  
+  dashboardSidebar(
+    sidebarMenu(
+      menuItem("Movies", tabName = "movies",icon = icon("film", lib="font-awesome") )
+    )
+  ),
+  
+   dashboardBody(
+      tabItem(tabName = "movies",
+              uiOutput("tiles"))
+    )
+   )
+
+server <- function(input, output){
+   output$tiles <- renderUI({
+    fluidRow(
+        a(box(width=NULL,
+              title = img(src = top50$link[1], height = 200, width = 200), footer = "Everyone Says I love you"),
+              href = "http://www.imdb.com/title/tt0116242/", 
+              target="_blank"),
+        a(box(width=NULL,
+              title = img(src = top50$link[2], height = 200, width = 300), footer = "What's Eating Gilbert Grape"),
+              href = "http://www.imdb.com/title/tt0108550/", 
+              target="_blank")
+         )
+    })
+  
+}
+
+shinyApp(ui, server)
+  
+
+```
+
+```{r}
+HTML(paste0("<div class='image-wrap'><img src='./images/",
+                                recipe.df$img[recipe.df$recipe.link == 1],
+                                "' class='",
+                                recipe.df$img.css[recipe.df$recipe.link == 1],
+                                "'></div>", "<strong>",
+                                recipe.df$recipe.name[recipe.df$recipe.link == 1],
+                                "</strong><br>",
+                                '<span style="font-size: 11pt;">By ',
+                                recipe.df$recipe.author[recipe.df$recipe.link == 1],
+                                '</span>'))
+
+```
 
