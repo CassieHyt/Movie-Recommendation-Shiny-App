@@ -15,12 +15,12 @@ G<-find_by_title("GoldenEye")
 showposter<-function(moviename){
   ## Input: movie name
   ## Output: movie Poster
-poster<-find_by_title("GoldenEye")$Poster[1]
-poster.url<-getURLContent(poster)
-a<-readJPEG(poster.url)
-p.plot<-plot(c(0,1),c(0,1),type="n",xlab="",ylab="",axes=FALSE)
-poster<-rasterImage(a,0,0,1,1)
-return(print(poster))
+  poster<-find_by_title(moviename)$Poster[1]
+  poster.url<-getURLContent(poster)
+  a<-readJPEG(poster.url)
+  p.plot<-plot(c(0,1),c(0,1),type="n",xlab="",ylab="",axes=FALSE)
+  poster<-rasterImage(a,0,0,1,1)
+  return(print(poster))
 }
 
 m.name<-c("GoldenEye")
