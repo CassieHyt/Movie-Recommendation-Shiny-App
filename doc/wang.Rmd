@@ -9,7 +9,7 @@ library(plyr)
 load("/Users/ouminamikun/Documents/Columbia/Spring 2017/ADS/final project/dat.RData")
 ```
 
-##Step 2: 
+##Step 2: ranking
 ```{r}
 movie_agg <- aggregate(dat$rating, list(dat$movie_name), mean)
 colnames(movie_agg) <- c("movies", "avg_rating")
@@ -25,20 +25,21 @@ pop_lrated <- rev(tail(pop$movies, 10))
 
 top50 <- head(movie_agg$movies[movie_agg$users_count >= 250],50)
 worst50 <- rev(tail(movie_agg$movies, 50))
-```
 
-##Step 3: not popular but highly rated
-```{r}
-dat_split <- split(dat, dat$movie_name)
-dat_split_sum <- lapply(dat_split, summary)
-num_users <- sapply(dat_split, nrow)
+top50_s <- top50[1]
+for(i in 2:length(top50)){
+  top50_s <- paste(top50_s,top50[i], sep = "\n")
+}
 
-n <- length(dat_split)
-rating_agv <- NA
-movie_name <- NA
-for(i in 1:n){
-  rating_agv[i] <- mean(dat_split[[i]]$rating)
-  movie_name[i] <- unique(dat_split[[i]]$movie_name)
+
+pop_lrated_s <- pop_lrated[1]
+for(i in 2:length(pop_lrated)){
+  pop_lrated_s <- paste(pop_lrated_s, pop_lrated[i], sep = "\n")
+}
+
+nopop_hrated_s <- nopop_hrated[1]
+for(i in 2:length(nopop_hrated)){
+  nopop_hrated_s <- paste(nopop_hrated_s, nopop_hrated[i],sep = "\n")
 }
 ```
 
@@ -72,9 +73,18 @@ ah <- rasterImage(pic,0,0,1,1)
 
 
 ```
+```{r}
+
+
+```
 
 ## Shiny app
 ```{r}
+library(omdbapi)
+library(dplyr)
+library(rvest)
+library(RCurl)
+library(jpeg)
 library(shiny)
 library(shinydashboard)
 
@@ -90,26 +100,44 @@ ui <- dashboardPage(
   dashboardBody(
       tabItem(tabName = "dashboard",
               fluidRow(
-                box(
-                  title = "Top 50",
-                  status = "primary",
-                  solidHeader = TRUE,
-                  collapsible = TRUE,
-                  verbatimTextOutput("top50")),
-                box(
-                  title = "Popular but bad movies",
-                  status = "success",
-                  solidHeader = T,
-                  verbatimTextOutput("pop_lrated")),
-                box(
-                  title = "Not popular but great movies",
-                  status = "danger",
-                  solidHeader = T,
-                  verbatimTextOutput("nopop_hrated")),
-                box(
-                  title = "poster",
-                  status = "danger",
-                  plotOutput("poster"))
+                box(title = "Top 1", 
+                    background = "red",
+                    status = "danger", 
+                    width = 3,
+                    solidHeader = TRUE,
+                    plotOutput("top1", height = 250)),
+                box(title = "Top 2", 
+                    background = "red",
+                    status = "danger", 
+                    width = 3,
+                    solidHeader = TRUE,
+                    plotOutput("top2", height = 250)),
+                box(title = "Top 3",
+                    background = "red",
+                    width = 3,
+                    status = "danger",
+                    plotOutput("top3"), height = 250),
+                box(title = "Top 4",
+                    background = "red",
+                    width = 3,
+                    status = "danger",
+                    plotOutput("top4"),height = 250),
+                box(title = "Top 50",
+                    status = "primary",
+                    solidHeader = TRUE,
+                    collapsible = TRUE,
+                    verbatimTextOutput("top50")),
+                box(title = "Popular but bad movies",
+                    status = "success",
+                    solidHeader = T,
+                    verbatimTextOutput("pop_lrated")),
+                box(title = "Not popular but great movies",
+                    status = "danger",
+                    solidHeader = T,
+                    verbatimTextOutput("nopop_hrated"))
+                
+                
+                
                 )
               )
       
@@ -118,31 +146,18 @@ ui <- dashboardPage(
 
 
 server <- function(input, output) { 
-  
-  output$top50 <- renderText({ top50_s })
+
+  output$top50 <- renderText({top50_s })
   output$pop_lrated <- renderText({pop_lrated_s})
   output$nopop_hrated <- renderText({nopop_hrated_s})
-  output$poster <- renderPlot({showposter("Annie Hall")})
+  output$top1 <- renderPlot({showposter("Everyone Says I Love You")})
+  output$top2 <- renderPlot({showposter("What's Eating Gilbert Grape")})
+  output$top3 <- renderPlot({showposter("Legends of the Fall")})
+  output$top4 <- renderPlot({showposter("Mighty Aphroditee")})
+  output$top5 <- renderPlot({showposter("Snow White and the Seven Dwarfs ")})
+  
   }
 
 shinyApp(ui = ui, server = server)
-```
-
-```{r}
-
-top50_s <- top50[1]
-for(i in 2:length(top50)){
-  top50_s <- paste(top50_s,top50[i], sep = "\n")
-}
 
 
-pop_lrated_s <- pop_lrated[1]
-for(i in 2:length(pop_lrated)){
-  pop_lrated_s <- paste(pop_lrated_s, pop_lrated[i], sep = "\n")
-}
-
-nopop_hrated_s <- nopop_hrated[1]
-for(i in 2:length(nopop_hrated)){
-  nopop_hrated_s <- paste(nopop_hrated_s, nopop_hrated[i],sep = "\n")
-}
-```
