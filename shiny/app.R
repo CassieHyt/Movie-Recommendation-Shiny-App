@@ -6,14 +6,32 @@ ui <- dashboardPage(
   dashboardSidebar(
     sidebarMenu(
       menuItem("Recommend by Movie Name", tabName = "MovieSearch", icon = icon("film")),
-      menuItem("Recommend by Type", icon = icon("th"), tabName = "widgets"))
-  ),
+      menuItem("Recommend by Type", icon = icon("th"), tabName = "widgets")),
+    menuItem("Top Movies", icon = icon("bar-charts"), tabName = "top")
+    )
+  ,
   dashboardBody(
-    sidebarSearchForm(textId = "searchText", buttonId = "searchButton",
-                      label = "Search for Movie Name...")
+    
+
+      
+        fluidRow(
+          box(
+          title = "Inputs", solidHeader = TRUE,
+          "Box content here", br(), "More box content",
+          sliderInput("slider", "Slider input:", 1, 100, 50),
+          textInput("text", "Text input:")
+        )
+      )
+        
+    ,
+      
+      tabItem(tabName = "widgets",
+              h2("Widgets tab content")
+      )
+    
   )
-  
 )
+  
 
 server <- function(input, output) { }
 

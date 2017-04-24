@@ -13,7 +13,7 @@ library(lda)
 library(shiny)
 library(shinydashboard)
 library(recharts)
-setwd("C:/Users/yftang/Documents/GitHub/Spr2017-proj5-grp10/doc")
+setwd("~/Documents/ADS/Spr2017-proj5-grp10/doc")
 load("../output/data_cloud.RData")
 
 ui <- dashboardPage(
