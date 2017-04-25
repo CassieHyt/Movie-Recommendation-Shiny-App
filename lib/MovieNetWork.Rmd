@@ -52,7 +52,7 @@ color[cate$cate=="romance"]<-"#ED7942"
 
 nodes<-data.frame(label,index,size,color)
 names(nodes)[2]<-"id"
-
+rownames(nodes)<-seq(1,n)
 
 
 from<-as.vector(mapply(rep,1:n,10))
@@ -66,7 +66,20 @@ NetWork.Movie<-list(nodes,edges)
 suppressPackageStartupMessages(library(threejs, quietly=TRUE))
 graphjs(edges,nodes)
 
+```
 
+
+
+```{r}
+input<-"Fierce Creatures"
+Movie.index<-grep(input,label)
+Rele.Movie.index<-MovieRec[Movie.index,]
+
+suppressPackageStartupMessages(library(threejs, quietly=TRUE))
+nodes.rec<-nodes[c(Movie.index,Rele.Movie.index),]
+num<-paste("^",Movie.index,"$",sep="")
+edges.rec<-edges[grep(num,from),]
+graphjs(edges.rec,nodes.rec)
 
 ```
 
