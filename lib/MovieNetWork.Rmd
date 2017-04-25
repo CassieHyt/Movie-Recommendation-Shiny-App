@@ -1,0 +1,72 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+setwd("~/Documents/ADS/Spr2017-proj5-grp10/data")
+load("V.RData")
+setwd("~/Documents/ADS/Spr2017-proj5-grp10/output")
+load("dat2.RData")
+V_matrix<-V_matrix[-1,]
+n<-dim(V_matrix)[1]
+
+findMovie<-function(n1){
+  distancelist <- list()
+  for(i in 1:n){
+    distance = (V_matrix[n1,] - V_matrix[i,])^2
+    distance = sum(distance)
+    distancelist = append(distancelist, distance)
+   }
+  distancedf = as.data.frame(distancelist)
+  minimum = order(distancedf, decreasing=FALSE)[2:11]
+  return(minimum)
+}
+
+MovieRec<-matrix(nrow = n, ncol = 10)
+for(j in 1:n){
+  MovieRec[j,]<-findMovie(j)
+  print(j)
+}
+
+#save(MovieRec,file = "MovieRec.Rdata")
+
+
+label<-read_table("../Movie rating/movies.txt",col_names = FALSE)
+index=seq(1,n)
+label.df<-data.frame(index,label)
+label<-unlist(label)
+size<-rep(1,n)
+cate.df<-data.frame(dat2$movie_id[!duplicated(dat2$movie_id)],dat2$label[!duplicated(dat2$movie_id)])
+
+cate<-merge(label.df,cate.df,by.x=1,by.y=1,all.x=TRUE)
+names(cate)[2:3]<-c("name","cate")
+cate[which(is.na(cate$cate)),]$cate<-"action & crime"
+
+#save(cate,file = "MovieCate_byMercuryMethod.Rdata")
+
+color<-rep("#00B3A3",n) # comedy : #00B3A3
+color[cate$cate=="thriller & adventure other"]<-"#EDEDDF"
+color[cate$cate=="action & crime"]<-"#00008A"
+color[cate$cate=="romance"]<-"#ED7942"
+
+nodes<-data.frame(label,index,size,color)
+names(nodes)[2]<-"id"
+
+
+
+from<-as.vector(mapply(rep,1:n,10))
+to<-as.vector(t(MovieRec))
+color<-rep("lightgray",16820)
+size<-rep(1,16820)
+edges<-data.frame(from,to,size,color)
+
+NetWork.Movie<-list(nodes,edges)
+
+suppressPackageStartupMessages(library(threejs, quietly=TRUE))
+graphjs(edges,nodes)
+
+
+
+```
+
