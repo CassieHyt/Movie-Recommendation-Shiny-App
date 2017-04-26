@@ -109,12 +109,7 @@ server <- function(input, output) {
     ind<-unique(as.vector(ind))
     edges.rec<-edges[ind,]
     
-    
-    suppressPackageStartupMessages(library(threejs, quietly=TRUE))
-    nodes.rec<-nodes[c(Movie.index,Rele.Movie.index),]
-    num<-paste("^",Movie.index,"$",sep="")
-    edges.rec<-edges[grep(num,from),]
-    
+  
     graphjs(edges.rec,nodes.rec)
   })
   
