@@ -22,9 +22,10 @@ ui <- dashboardPage(
       )
     
     ,
+    
     box(title = "Movie We recommended",
-            verbatimTextOutput("movie")
-    )
+        tableOutput("table"))
+    
     )
   )
 )
@@ -35,8 +36,12 @@ server <- function(input , output){
     input$text
   })
   
-  output$movie <- renderText({
-     as.vector(unlist(recon(moviename())))
+  # output$movie <- renderText({
+  #    as.vector(unlist(recon(moviename())))
+  # })
+  
+  output$table<-renderTable({
+    as.vector(unlist(recon(moviename())))
   })
 }
 
