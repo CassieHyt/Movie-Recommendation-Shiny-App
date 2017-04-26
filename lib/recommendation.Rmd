@@ -28,10 +28,8 @@ recon <- function(movie_name_given){
   
   movie_recommended <- moviedf[moviedf$movie_id %in% minimum,]
   movie_recommended <- subset(movie_recommended, select=c("movie_name"))
-  movie_recommended <- as.list(movie_recommended)
   return(movie_recommended)
 }
-
 recon("Star Wars ")
 
 ```
