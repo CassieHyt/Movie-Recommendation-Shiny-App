@@ -14,17 +14,14 @@ library(shiny)
 library(shinydashboard)
 library(recharts)
 setwd("C:/Users/yftang/Documents/GitHub/Spr2017-proj5-grp10/doc")
-data.cloud<-load("../output/data_cloud.RData")
+load("../output/data_cloud.RData")
+Data<-data.frame(movie_name = data.cloud[[1]]$movie_name,Freq = data.cloud[[1]]$Freq, ratings=data.cloud[[1]]$ratings)
 
-# eWC.F-NULL
-# eWC.R<-NULL
-# for(i in 1:4){
-#   eWC.F[i] <- eWordcloud(data.cloud[[i]], namevar = ~movie_name, datavar = ~Freq,size = c(600, 600),title = "frequently rated movies - Comedy",rotationRange = c(1, 1))
-#   eWC.R[i] <- eWordcloud(data.cloud[[i]], namevar = ~movie_name, datavar = ~ratings,size = c(600, 600),title = "frequently rated movies - Comedy",rotationRange = c(-1, 1))
-# }
 
 method<-c("Freq","ratings")
-cluster<-seq(1,4,1)
+#cluster<-c("cluster1","cluster2","cluster3","cluster4")
+cluster<-c("romance","adventure","thrill","whatever")
+
 
 ui <- dashboardPage(
   dashboardHeader(title = "Movie Recommend"),
@@ -41,8 +38,7 @@ ui <- dashboardPage(
         selectInput("cluster", "cluster:", choices = cluster)
         
        ),
-      box( textOutput("test") ),
-      
+
       
       box(title = "word clouds",
           plotOutput("wordclouds"))
@@ -62,13 +58,39 @@ server <- function(input, output){
     input$method
   })
   
-  output$test<-renderPrint({
-    input$cluster
-  })
+ 
+  # selectdata<-reactive({
+  #   list(cluster1=data.frame(movie_name = data.cloud[[1]]$movie_name,
+  #        Freq = data.cloud[[1]]$Freq,
+  #        ratings =  data.cloud[[1]]$ratings
+  #   ),
+  #   cluster2=data.frame(movie_name = data.cloud[[2]]$movie_name,
+  #              Freq = data.cloud[[2]]$Freq,
+  #              ratings =  data.cloud[[2]]$ratings
+  #   ),
+  #   cluster3= data.frame(movie_name = data.cloud[[3]]$movie_name,
+  #              Freq = data.cloud[[3]]$Freq,
+  #              ratings =  data.cloud[[3]]$ratings
+  #   ),
+  #   cluster4= data.frame(movie_name = data.cloud[[4]]$movie_name,
+  #              Freq = data.cloud[[4]]$Freq,
+  #              ratings =  data.cloud[[4]]$ratings
+  #   ))
+  #        
+  # })
+  
+ selectdata<-reactive({
+     # list(movie_name=Data[[as.numeric(input$cluster)]]$movie_name,
+     #      Freq= Data[[as.numeric(input$cluster)]]$Freq,
+     #      ratings=Data[[as.numeric(input$cluster)]]$ratings)
+   input$Data
+   
+ })
+ 
  
   output$wordclouds<-renderPlot({
     # eWordcloud(data.cloud[cluster()], namevar = ~movie_name(), datavar = ~method(),size = c(600, 600),title = "whatever ",rotationRange = c(-1, 1))
-    eWordcloud(data.cloud[clusterchoice()], namevar = ~movie_name, datavar = ~methodchoice(),size = c(600, 600),title = "whatever ",rotationRange = c(-1, 1))
+    eWordcloud(selectdata(), namevar = ~selectdata()$movie_name, datavar = ~selectdata()$Freq,size = c(600, 600),title = "whatever ",rotationRange = c(-1, 1))
     
     })  
   
