@@ -14,16 +14,8 @@ library(shiny)
 library(shinydashboard)
 library(recharts)
 
-
 setwd("C:/Users/yftang/Documents/GitHub/Spr2017-proj5-grp10/doc")
 load("../output/data_cloud.RData")
-# Data<-list()
-# Data$romance<-data.frame(movie_name = data.cloud[[1]]$movie_name,Freq = data.cloud[[1]]$Freq, ratings=data.cloud[[1]]$ratings)
-# Data$adventure<-data.frame(movie_name = data.cloud[[2]]$movie_name,Freq = data.cloud[[2]]$Freq, ratings=data.cloud[[2]]$ratings)
-# Data$thrill<-data.frame(movie_name = data.cloud[[3]]$movie_name,Freq = data.cloud[[3]]$Freq, ratings=data.cloud[[3]]$ratings)
-# Data$whatever<-data.frame(movie_name = data.cloud[[4]]$movie_name,Freq = data.cloud[[4]]$Freq, ratings=data.cloud[[4]]$ratings)
-
-
 
 ui <- dashboardPage(
   dashboardHeader(title = "Movie Recommend"),
@@ -35,51 +27,28 @@ ui <- dashboardPage(
   dashboardBody(
     fluidRow(
       
-        plotOutput("wordcloud1")
-        
-       # plotOutput("wordcloud2")
-      )
-        # eWordcloud(data.cloud[[2]], namevar = ~movie_name, datavar = ~Freq,size = c(600, 600),title = "frequently rated movies - Romance",rotationRange = c(1, 1)),
-        # eWordcloud(data.cloud[[2]], namevar = ~movie_name, datavar = ~ratings,size = c(600, 600),title = "frequently rated movies - Romance",rotationRange = c(1, 1)),
-        #
-        # eWordcloud(data.cloud[[3]], namevar = ~movie_name, datavar = ~Freq,size = c(600, 600),title = "frequently rated movies - Thriller & Adventure",rotationRange = c(1, 1)),
-        # eWordcloud(data.cloud[[3]], namevar = ~movie_name, datavar = ~ratings,size = c(600, 600),title = "frequently rated movies - Thriller & Adventure",rotationRange = c(1, 1)),
-        #
-        # eWordcloud(data.cloud[[4]], namevar = ~movie_name, datavar = ~Freq,size = c(600, 600),title = "frequently rated movies - Action & Crime",rotationRange = c(1, 1)),
-        # eWordcloud(data.cloud[[4]], namevar = ~movie_name, datavar = ~ratings,size = c(600, 600),title = "frequently rated movies - Action & Crime",rotationRange = c(1, 1))
-
+      eWordcloud(data.cloud[[1]], 
+                 namevar = ~movie_name, 
+                 datavar = ~Freq,
+                 size = c(600, 600),
+                 title = "frequently rated movies - Comedy",
+                 rotationRange = c(0, 0)),
+      
+        eWordcloud(data.cloud[[2]], namevar = ~movie_name, datavar = ~Freq,size = c(600, 600),title = "frequently rated movies - Romance",rotationRange = c(0, 0)),
        
 
-      # box(title = "test",
-      #     verbatimTextOutput("test")),
-      # 
-      # box(title = "word clouds",
-      #     plotOutput("wordclouds"))
-    
+        eWordcloud(data.cloud[[3]], namevar = ~movie_name, datavar = ~Freq,size = c(600, 600),title = "frequently rated movies - Thriller & Adventure",rotationRange = c(0, 0)),
+       
+
+        eWordcloud(data.cloud[[4]], namevar = ~movie_name, datavar = ~Freq,size = c(600, 600),title = "frequently rated movies - Action & Crime",rotationRange = c(0, 0))
+        
+      
+   )
   )
  )
 
-
-
 server <- function(input, output){
-  output$wordcloud1<-renderPlot({
-    eWordcloud(data.cloud[[1]], 
-                         namevar = ~movie_name, 
-                         datavar = ~Freq,
-                         size = c(600, 600),
-                         title = "frequently rated movies - Comedy",
-                         rotationRange = c(1, 1))
-    })
   
-  output$wordcloud2<-renderPlot({
-    eWordcloud(data.cloud[[1]], 
-               namevar = ~movie_name, 
-               datavar = ~ratings,
-               size = c(600, 600),
-               title = "frequently rated movies - Comedy",
-               rotationRange = c(1, 1))
-  })
- 
 }
 
 shinyApp(ui, server)
