@@ -6,10 +6,15 @@ library(rvest)
 library(RCurl)
 library(jpeg)
 library(shinyBS)
+library(readr)
 load("../output/dat2.RData")
 dat <- dat2
 load("../output/top50_df.RData")
 load("../output/wang.RData")
+load("../data/MovieRec.Rdata")
+
+label<-read_table("../data/Movie rating/movies.txt",col_names = FALSE)
+label<-unlist(label)
 
 ui <- dashboardPage(
   dashboardHeader(title = "Movie Recommend"),
@@ -55,7 +60,8 @@ ui <- dashboardPage(
                fluidRow(
                sidebarSearchForm(textId = "searchText", 
                                  buttonId = "searchButton",
-                                 label = "Search the Movie..."))
+                                 label = "Star War"),
+               plotOutput("MovirNetwork"))
                )
      )
 
@@ -87,6 +93,30 @@ server <- function(input, output) {
   output$pop_lrated <- renderText({pop_lrated_s})
   output$nopop_hrated <- renderText({nopop_hrated_s})
   
+  output$MovieNetwork<-renderPlot({
+    Movie.index<-grep(input$searchText,label)
+    Rele.Movie.index<-MovieRec[Movie.index,]
+    
+    Movie.Net<-c(Movie.index,Rele.Movie.index)
+    Rele.Movie.index<-MovieRec[Movie.Net,]
+    Rele.Movie.index<-unique(as.vector(Rele.Movie.index))
+    
+    
+    suppressPackageStartupMessages(library(threejs, quietly=TRUE))
+    nodes.rec<-nodes[Rele.Movie.index,]
+    num<-paste("^",Movie.Net,"$",sep="")
+    ind<-sapply(num,grep,from)
+    ind<-unique(as.vector(ind))
+    edges.rec<-edges[ind,]
+    
+    
+    suppressPackageStartupMessages(library(threejs, quietly=TRUE))
+    nodes.rec<-nodes[c(Movie.index,Rele.Movie.index),]
+    num<-paste("^",Movie.index,"$",sep="")
+    edges.rec<-edges[grep(num,from),]
+    
+    graphjs(edges.rec,nodes.rec)
+  })
   
   
   }
