@@ -5,11 +5,7 @@ output: html_notebook
 
 ##Step 1: Load data and libraries
 ```{r}
-if(!require(plyr)) install.packages("plyr")
 library(plyr)
-load("/Users/ouminamikun/Documents/Columbia/Spring 2017/ADS/final project/dat2.RData")
-dat <- dat2
-
 ```
 
 ##Step 2: ranking
@@ -79,6 +75,7 @@ top50_df$imbdLink <- imdbLink
 write.csv(top50_df, "top50_df.csv", row.names = F)
 ```
 
+## Poster
 ```{r}
 library(omdbapi)
 library(dplyr)
@@ -106,13 +103,10 @@ b[1]
 pic <- readJPEG(getURLContent(b[2]))
 plot(0:1,0:1,type="n",ann=FALSE,axes=FALSE)
 ah <- rasterImage(pic,0,0,1,1)
-
-
-
 ```
 
 
-## Shiny app
+## Shiny app version 1
 ```{r}
 library(omdbapi)
 library(dplyr)
@@ -193,11 +187,7 @@ shinyApp(ui = ui, server = server)
 ```
 
 
-```{r}
-
-
-```
-
+## Shiny app version 2
 ```{r}
 library(omdbapi)
 library(dplyr)
@@ -236,7 +226,7 @@ ui <- dashboardPage(
                     status = "primary",
                     solidHeader = TRUE,
                     collapsible = TRUE,
-                    verbatimTextOutput("top50")),
+                    uiOutput("top50")),
                 box(title = "Popular but bad movies",
                     status = "success",
                     solidHeader = T,
@@ -264,14 +254,16 @@ server <- function(input, output){
     )
    })##end of renderUI
    
-   output$top50 <- renderText({top50_s })
+   output$top50 <- renderUI({ lapply(top50_df$top50[1:20], function(j){
+     br(a(top50_df$top50[j], href = top50_df$imbdLink[top50_df$top50==j], target = "_blank"))
+   } ) })
     output$pop_lrated <- renderText({pop_lrated_s})
     output$nopop_hrated <- renderText({nopop_hrated_s})
 }
 
 shinyApp(ui, server )
 ```
-```{r}
-get_actors(find_by_title("Annie Hall"))
-```
+
+
+
 
