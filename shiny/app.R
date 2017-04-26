@@ -6,10 +6,20 @@ library(rvest)
 library(RCurl)
 library(jpeg)
 library(shinyBS)
-load("../output/dat2.RData")
+library(pbapply)
+library(readr)
+library(omdbapi)
+library(lda)
+library(recharts)
+
+source("/Users/jinruxue/Documents/ADS/Spr2017-proj5-grp10/lib/information.R")
+
+
+load("/Users/jinruxue/Documents/ADS/Spr2017-proj5-grp10/output/dat2.RData")
 dat <- dat2
-load("../output/top50_df.RData")
-load("../output/wang.RData")
+
+load("/Users/jinruxue/Documents/ADS/Spr2017-proj5-grp10/output/wang.RData")
+load("/Users/jinruxue/Documents/ADS/Spr2017-proj5-grp10/output/data_cloud.RData")
 
 ui <- dashboardPage(
   dashboardHeader(title = "Movie Recommend"),
@@ -24,7 +34,7 @@ ui <- dashboardPage(
   ,
   dashboardBody(
     tabItems(
-      tabItem(tabName = "info",h2("About this app:...")),
+      tabItem(tabName = "info",h2(info)),
       tabItem(tabName = "top",
               fluidRow(
                 box(width = NULL,
@@ -50,7 +60,25 @@ ui <- dashboardPage(
               )##end of fluidRow
       )##end of tabItem
       ,
-      tabItem(tabName = "words",h2("Mercury's"))
+      tabItem(tabName = "words",fluidRow(
+        
+        eWordcloud(data.cloud[[1]], 
+                   namevar = ~movie_name, 
+                   datavar = ~Freq,
+                   size = c(600, 600),
+                   title = "frequently rated movies - Comedy",
+                   rotationRange = c(0, 0)),
+        
+        eWordcloud(data.cloud[[2]], namevar = ~movie_name, datavar = ~Freq,size = c(600, 600),title = "frequently rated movies - Romance",rotationRange = c(0, 0)),
+        
+        
+        eWordcloud(data.cloud[[3]], namevar = ~movie_name, datavar = ~Freq,size = c(600, 600),title = "frequently rated movies - Thriller & Adventure",rotationRange = c(0, 0)),
+        
+        
+        eWordcloud(data.cloud[[4]], namevar = ~movie_name, datavar = ~Freq,size = c(600, 600),title = "frequently rated movies - Action & Crime",rotationRange = c(0, 0))
+        
+        
+      ))
       
       
       
@@ -76,20 +104,20 @@ ui <- dashboardPage(
 
 
 server <- function(input, output) { 
-  output$tiles <- renderUI({
-    fluidRow(
-      lapply(top50_df$poster[1:8], function(i) {
-        a(box(width=3,
-              title = img(src = i, height = 350, width = 250),
-              footer = top50_df$top50[top50_df$poster == i]
-        ), href= top50_df$imbdLink[top50_df$poster == i] , target="_blank")
-      }) ##end of lappy
-    )
-  })##end of renderUI
+  # output$tiles <- renderUI({
+  #   fluidRow(
+  #     lapply(top50_df$poster[1:8], function(i) {
+  #       a(box(width=3,
+  #             title = img(src = i, height = 350, width = 250),
+  #             footer = top50_df$top50[top50_df$poster == i]
+  #       ), href= top50_df$imbdLink[top50_df$poster == i] , target="_blank")
+  #     }) ##end of lappy
+  #   )
+  # })##end of renderUI
   
-  output$top50 <- renderText({top50_s })
-  output$pop_lrated <- renderText({pop_lrated_s})
-  output$nopop_hrated <- renderText({nopop_hrated_s})
+  # output$top50 <- renderText({top50_s })
+  # output$pop_lrated <- renderText({pop_lrated_s})
+  # output$nopop_hrated <- renderText({nopop_hrated_s})
   
   output$MovieNetwork<-renderPlot({
     Movie.index<-grep(input$movieSearch,label)
