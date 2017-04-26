@@ -74,6 +74,7 @@ graphjs(edges,nodes)
 input<-"Fierce Creatures"
 Movie.index<-grep(input,label)
 Rele.Movie.index<-MovieRec[Movie.index,]
+<<<<<<< HEAD
 Movie.Net<-c(Movie.index,Rele.Movie.index)
 Rele.Movie.index<-MovieRec[Movie.Net,]
 Rele.Movie.index<-unique(as.vector(Rele.Movie.index))
@@ -85,6 +86,13 @@ num<-paste("^",Movie.Net,"$",sep="")
 ind<-sapply(num,grep,from)
 ind<-unique(as.vector(ind))
 edges.rec<-edges[ind,]
+=======
+
+suppressPackageStartupMessages(library(threejs, quietly=TRUE))
+nodes.rec<-nodes[c(Movie.index,Rele.Movie.index),]
+num<-paste("^",Movie.index,"$",sep="")
+edges.rec<-edges[grep(num,from),]
+>>>>>>> master
 graphjs(edges.rec,nodes.rec)
 
 ```

@@ -1,0 +1,277 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+##Step 1: Load data and libraries
+```{r}
+if(!require(plyr)) install.packages("plyr")
+library(plyr)
+load("/Users/ouminamikun/Documents/Columbia/Spring 2017/ADS/final project/dat2.RData")
+dat <- dat2
+
+```
+
+##Step 2: ranking
+```{r}
+movie_agg <- aggregate(dat$rating, list(dat$movie_name), mean)
+colnames(movie_agg) <- c("movies", "avg_rating")
+
+users_count <- aggregate(dat$movie_name,list(dat$movie_name), length)
+movie_agg$users_count <- users_count$x
+movie_agg <- movie_agg[order(movie_agg$avg_rating, decreasing = T), ]
+
+nopop <- movie_agg[movie_agg$users_count <= 6,]
+nopop_hrated <- head(nopop$movies, 10)
+pop <- movie_agg[movie_agg$users_count >=76,]
+pop_lrated <- rev(tail(pop$movies, 10))
+
+top50 <- head(movie_agg$movies[movie_agg$users_count >= 250],50)
+worst50 <- rev(tail(movie_agg$movies, 50))
+
+top50_s <- top50[1]
+for(i in 2:length(top50)){
+  top50_s <- paste(top50_s,top50[i], sep = "\n")
+}
+
+
+pop_lrated_s <- pop_lrated[1]
+for(i in 2:length(pop_lrated)){
+  pop_lrated_s <- paste(pop_lrated_s, pop_lrated[i], sep = "\n")
+}
+
+nopop_hrated_s <- nopop_hrated[1]
+for(i in 2:length(nopop_hrated)){
+  nopop_hrated_s <- paste(nopop_hrated_s, nopop_hrated[i],sep = "\n")
+}
+```
+
+
+```{r}
+
+#####DON'T RUN THIS AGAIN######
+poster <- NULL
+for(i in 1:50){
+  omdb_poster <- search_by_title(trimws(top50[i], which = "both"))$Poster[1]
+  if(is.null(omdb_poster) == TRUE){
+    poster[i] <- NA
+  } else{
+    poster[i] <- omdb_poster
+  }
+}
+
+id <- NULL
+for(i in 1:50){
+  imdb_id <- search_by_title(trimws(top50[i], which = "both"))$imdbID[1]
+  if(is.null(imdb_id) == TRUE){
+    id[i] <- NA
+  } else{
+    id[i] <- imdb_id
+  }
+}
+
+imdbLink <- paste("http://www.imdb.com/title/", id, "/", sep = "")
+
+top50_df <- data.frame(top50)
+top50_df$poster <- poster
+top50_df$imbdLink <- imdbLink
+
+write.csv(top50_df, "top50_df.csv", row.names = F)
+```
+
+```{r}
+library(omdbapi)
+library(dplyr)
+library(rvest)
+library(RCurl)
+library(jpeg)
+
+lego_movie <- read_html("http://www.imdb.com/title/tt1490017/")
+poster <- lego_movie %>%
+  html_nodes(".poster img") %>%
+  html_attr("src")
+poster
+
+A <- find_by_title("Everyone says I love you")
+
+A$imdbRating
+A$Plot
+A$Poster
+
+B <- find_by_title("Annie Hall")
+b <- B$Poster
+b[1]
+
+
+pic <- readJPEG(getURLContent(b[2]))
+plot(0:1,0:1,type="n",ann=FALSE,axes=FALSE)
+ah <- rasterImage(pic,0,0,1,1)
+
+
+
+```
+
+
+## Shiny app
+```{r}
+library(omdbapi)
+library(dplyr)
+library(rvest)
+library(RCurl)
+library(jpeg)
+library(shinyBS)
+library(shiny)
+library(shinydashboard)
+
+ui <- dashboardPage(
+  dashboardHeader(),
+  
+  dashboardSidebar(
+    sidebarMenu(
+      menuItem("Movies View", tabName = "dashboard", icon = icon("film", lib="font-awesome")),
+      menuItem("Movies", tabName = "movies",icon = icon("film", lib="font-awesome") )
+    )
+  ),
+  
+  dashboardBody(
+      tabItem(tabName = "dashboard",
+              fluidRow(
+                box(title = "Top 1", 
+                    background = "red",
+                    status = "danger", 
+                    width = 3,
+                    solidHeader = TRUE,
+                    plotOutput("top1", height = 250)),
+                box(title = "Top 2", 
+                    background = "red",
+                    status = "danger", 
+                    width = 3,
+                    solidHeader = TRUE,
+                    plotOutput("top2", height = 250)),
+                box(title = "Top 3",
+                    background = "red",
+                    width = 3,
+                    status = "danger",
+                    plotOutput("top3"), height = 250),
+                box(title = "Top 4",
+                    background = "red",
+                    width = 3,
+                    status = "danger",
+                    plotOutput("top4"),height = 250),
+                box(title = "Top 50",
+                    status = "primary",
+                    solidHeader = TRUE,
+                    collapsible = TRUE,
+                    verbatimTextOutput("top50")),
+                box(title = "Popular but bad movies",
+                    status = "success",
+                    solidHeader = T,
+                    verbatimTextOutput("pop_lrated")),
+                box(title = "Not popular but great movies",
+                    status = "danger",
+                    solidHeader = T,
+                    verbatimTextOutput("nopop_hrated")) ))
+              
+        )
+      )
+
+server <- function(input, output) { 
+
+  output$top50 <- renderText({top50_s })
+  output$pop_lrated <- renderText({pop_lrated_s})
+  output$nopop_hrated <- renderText({nopop_hrated_s})
+  output$top1 <- renderPlot({showposter("Everyone Says I Love You")})
+  output$top2 <- renderPlot({showposter("What's Eating Gilbert Grape")})
+  output$top3 <- renderPlot({showposter("Legends of the Fall")})
+  output$top4 <- renderPlot({showposter("Mighty Aphroditee")})
+  output$top5 <- renderPlot({showposter("Snow White and the Seven Dwarfs ")})
+  
+  
+  }
+
+shinyApp(ui = ui, server = server)
+```
+
+
+```{r}
+
+
+```
+
+```{r}
+library(omdbapi)
+library(dplyr)
+library(rvest)
+library(RCurl)
+library(jpeg)
+library(shinyBS)
+library(shiny)
+library(shinydashboard)
+
+load("../output/dat2.RData")
+dat <- dat2
+load("../output/top50_df.RData")
+load("../output/wang.RData")
+
+ui <- dashboardPage(
+  dashboardHeader(),
+  
+  dashboardSidebar(
+    sidebarMenu(
+      menuItem("Movies", tabName = "movies",icon = icon("film", lib="font-awesome") )
+    )
+  ),
+  
+   dashboardBody(
+      tabItem(tabName = "movies",
+              fluidRow(
+                box(width = NULL,
+                    title = "Top 8 Movies",
+                    status = "danger",
+                    collapsible = TRUE,
+                    solidHeader = FALSE,
+                    background = "black",
+                    uiOutput("tiles")),
+                box(title = "Top 50",
+                    status = "primary",
+                    solidHeader = TRUE,
+                    collapsible = TRUE,
+                    verbatimTextOutput("top50")),
+                box(title = "Popular but bad movies",
+                    status = "success",
+                    solidHeader = T,
+                    verbatimTextOutput("pop_lrated")),
+                box(title = "Not popular but great movies",
+                    status = "warning",
+                    solidHeader = T,
+                    verbatimTextOutput("nopop_hrated"))
+                )##end of fluidRow
+              )##end of tabItem
+      
+
+    )##end of dashBody
+   )##end of dashbooardPage
+
+server <- function(input, output){
+   output$tiles <- renderUI({
+    fluidRow(
+      lapply(top50_df$poster[1:8], function(i) {
+          a(box(width=3,
+            title = img(src = i, height = 350, width = 250),
+            footer = top50_df$top50[top50_df$poster == i]
+            ), href= top50_df$imbdLink[top50_df$poster == i] , target="_blank")
+         }) ##end of lappy
+    )
+   })##end of renderUI
+   
+   output$top50 <- renderText({top50_s })
+    output$pop_lrated <- renderText({pop_lrated_s})
+    output$nopop_hrated <- renderText({nopop_hrated_s})
+}
+
+shinyApp(ui, server )
+```
+```{r}
+get_actors(find_by_title("Annie Hall"))
+```
+
