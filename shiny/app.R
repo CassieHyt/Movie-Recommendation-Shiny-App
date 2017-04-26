@@ -6,15 +6,10 @@ library(rvest)
 library(RCurl)
 library(jpeg)
 library(shinyBS)
-library(readr)
 load("../output/dat2.RData")
 dat <- dat2
 load("../output/top50_df.RData")
 load("../output/wang.RData")
-load("../data/MovieRec.Rdata")
-
-label<-read_table("../data/Movie rating/movies.txt",col_names = FALSE)
-label<-unlist(label)
 
 ui <- dashboardPage(
   dashboardHeader(title = "Movie Recommend"),
@@ -55,13 +50,16 @@ ui <- dashboardPage(
                )##end of fluidRow
        )##end of tabItem
        ,
-       tabItem(tabName = "words",h2("Mercury's")),
+       tabItem(tabName = "words",h2("Mercury's"))
+       
+       
+       
+       
+       ,
        tabItem(tabName = "MovieSearch", 
                fluidRow(
-               sidebarSearchForm(textId = "searchText", 
-                                 buttonId = "searchButton",
-                                 label = "Star War"),
-               plotOutput("MovirNetwork"))
+                 textAreaInput("MovieSearch.name", "Please Enter the Movie Name", "Star War", width = "1000px")
+                 )
                )
      )
 
@@ -94,7 +92,7 @@ server <- function(input, output) {
   output$nopop_hrated <- renderText({nopop_hrated_s})
   
   output$MovieNetwork<-renderPlot({
-    Movie.index<-grep(input$searchText,label)
+    Movie.index<-grep(input$movieSearch,label)
     Rele.Movie.index<-MovieRec[Movie.index,]
     
     Movie.Net<-c(Movie.index,Rele.Movie.index)
@@ -109,7 +107,9 @@ server <- function(input, output) {
     ind<-unique(as.vector(ind))
     edges.rec<-edges[ind,]
     
-  
+    
+    
+    
     graphjs(edges.rec,nodes.rec)
   })
   

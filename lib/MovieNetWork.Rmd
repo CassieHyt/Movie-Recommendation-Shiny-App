@@ -73,23 +73,25 @@ graphjs(edges,nodes)
 ```{r}
 input<-"Star War"
 Movie.index<-grep(input,label)
-Rele.Movie.index<-MovieRec[Movie.index,]
+    Rele.Movie.index<-MovieRec[Movie.index,]
+    
+    Movie.Net<-c(Movie.index,Rele.Movie.index)
+    Rele.Movie.index<-MovieRec[Movie.Net,]
+    Rele.Movie.index<-unique(as.vector(Rele.Movie.index))
+    
+    
+    suppressPackageStartupMessages(library(threejs, quietly=TRUE))
+    nodes.rec<-nodes[Rele.Movie.index,]
+    num<-paste("^",Movie.Net,"$",sep="")
+    ind<-sapply(num,grep,from)
+    ind<-unique(as.vector(ind))
+    edges.rec<-edges[ind,]
+    
+    
+   
+    
+    graphjs(edges.rec,nodes.rec)
 
-Movie.Net<-c(Movie.index,Rele.Movie.index)
-Rele.Movie.index<-MovieRec[Movie.Net,]
-Rele.Movie.index<-unique(as.vector(Rele.Movie.index))
-
-
-suppressPackageStartupMessages(library(threejs, quietly=TRUE))
-nodes.rec<-nodes[Rele.Movie.index,]
-num<-paste("^",Movie.Net,"$",sep="")
-ind<-sapply(num,grep,from)
-ind<-unique(as.vector(ind))
-edges.rec<-edges[ind,]
-
-
-
-graphjs(edges.rec,nodes.rec)
 
 ```
 
