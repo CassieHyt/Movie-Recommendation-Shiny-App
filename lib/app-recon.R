@@ -17,15 +17,15 @@ ui <- dashboardPage(
     fluidRow(
       box(
         title = "Movie recommendation", solidHeader = TRUE,
-        textInput("text", "Give us a movie!")
+        textInput("text", "Give us a movie!", value ="Star Wars ")
         
       )
-    )
+    
     ,
-    tabItem(tabName = "widgets",
+    box(title = "Movie We recommended",
             verbatimTextOutput("movie")
     )
-    
+    )
   )
 )
 
@@ -36,8 +36,7 @@ server <- function(input , output){
   })
   
   output$movie <- renderText({
-   # input$text
-     as.vector(unlist(recon(movie)))
+     as.vector(unlist(recon(moviename())))
   })
 }
 
