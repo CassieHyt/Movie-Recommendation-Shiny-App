@@ -1,6 +1,9 @@
 library(shiny)
 library(shinydashboard)
 
+setwd("C:/Users/yftang/Documents/GitHub/Spr2017-proj5-grp10/lib")
+
+source("rec.R")
 ui <- dashboardPage(
   dashboardHeader(title = "Movie Recommend"),
   dashboardSidebar(
@@ -14,27 +17,27 @@ ui <- dashboardPage(
     fluidRow(
       box(
         title = "Movie recommendation", solidHeader = TRUE,
-        textInput("text", "Give us a movie!", "star war "),
-        actionButton("search", "Search movie")
+        textInput("text", "Give us a movie!")
+        
       )
     )
     ,
     tabItem(tabName = "widgets",
-            tableOutput("movie")
+            verbatimTextOutput("movie")
     )
     
   )
 )
 
-server <- function(input, output){
-  
-  
-  
+server <- function(input , output){
+
   moviename <- reactive({
     input$text
   })
+  
   output$movie <- renderText({
-    recon(moviename())
+   # input$text
+     as.vector(unlist(recon(movie)))
   })
 }
 
