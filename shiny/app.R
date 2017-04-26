@@ -6,6 +6,10 @@ library(rvest)
 library(RCurl)
 library(jpeg)
 library(shinyBS)
+load("../output/dat2.RData")
+dat <- dat2
+load("../output/top50_df.RData")
+load("../output/wang.RData")
 
 ui <- dashboardPage(
   dashboardHeader(title = "Movie Recommend"),
@@ -21,42 +25,31 @@ ui <- dashboardPage(
   dashboardBody(
      tabItems(
        tabItem(tabName = "info",h2("About this app:...")),
-       tabItem(tabName = "top",fluidRow(
-         box(title = "Top 1", 
-             background = "red",
-             status = "danger", 
-             width = 3,
-             solidHeader = TRUE,
-             plotOutput("top1", height = 250)),
-         box(title = "Top 2", 
-             background = "red",
-             status = "danger", 
-             width = 3,
-             solidHeader = TRUE,
-             plotOutput("top2", height = 250)),
-         box(title = "Top 3",
-             background = "red",
-             width = 3,
-             status = "danger",
-             plotOutput("top3"), height = 250),
-         box(title = "Top 4",
-             background = "red",
-             width = 3,
-             status = "danger",
-             plotOutput("top4"),height = 250),
-         box(title = "Top 50",
-             status = "primary",
-             solidHeader = TRUE,
-             collapsible = TRUE,
-             verbatimTextOutput("top50")),
-         box(title = "Popular but bad movies",
-             status = "success",
-             solidHeader = T,
-             verbatimTextOutput("pop_lrated")),
-         box(title = "Not popular but great movies",
-             status = "danger",
-             solidHeader = T,
-             verbatimTextOutput("nopop_hrated")) )),
+       tabItem(tabName = "top",
+               fluidRow(
+                 box(width = NULL,
+                     title = "Top 8 Movies",
+                     status = "danger",
+                     collapsible = TRUE,
+                     solidHeader = FALSE,
+                     background = "black",
+                     uiOutput("tiles")),
+                 box(title = "Top 50",
+                     status = "primary",
+                     solidHeader = TRUE,
+                     collapsible = TRUE,
+                     verbatimTextOutput("top50")),
+                 box(title = "Popular but bad movies",
+                     status = "success",
+                     solidHeader = T,
+                     verbatimTextOutput("pop_lrated")),
+                 box(title = "Not popular but great movies",
+                     status = "warning",
+                     solidHeader = T,
+                     verbatimTextOutput("nopop_hrated"))
+               )##end of fluidRow
+       )##end of tabItem
+       ,
        tabItem(tabName = "words",h2("Mercury's")),
        tabItem(tabName = "MovieSearch", 
                fluidRow(
