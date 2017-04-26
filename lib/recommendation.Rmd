@@ -8,26 +8,30 @@ This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute
 Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
 
 ```{r}
-V_matrix <- read.csv("/Users/ptfairy/Desktop/V.csv", fill=TRUE, header = FALSE, stringsAsFactors = FALSE)
-save(V_matrix, file="V.RData")
-distancelist <- list()
-for(i in 1:nrow(V_matrix)){
-  distance = (V_matrix[51,] - V_matrix[i,])^2
-  distance = sum(distance)
-  distancelist = append(distancelist, distance)
+load("~/Spr2017-proj5-grp10/data/V.RData")
+load("~/Spr2017-proj5-grp10/data/movies1.RData")
+recon <- function(movie_id){
+  
+  distancelist <- list()
+  for(i in 1:nrow(V_matrix)){
+    distance = (V_matrix[movie_id,] - V_matrix[i,])^2
+    distance = sum(distance)
+    distancelist = append(distancelist, distance)
+  }
+  distancedf = as.data.frame(distancelist)
+  minimum = order(distancedf, decreasing=FALSE)[2:11]
+  minimum = minimum - 1
+  print(minimum)
+  
+  moviedf <- as.data.frame(movies1)
+  
+  movie_recommended <- moviedf[moviedf$movie_id %in% minimum,]
+  movie_recommended <- subset(movie_recommended, select=c("movie_name"))
+  movie_recommended <- as.list(movie_recommended)
+  return(movie_recommended)
 }
-distancedf = as.data.frame(distancelist)
-minimum = order(distancedf, decreasing=FALSE)[2:11]
-minimum = minimum - 1
-print(minimum)
 
-load("~/Desktop/movies1.RData")
-moviedf <- as.data.frame(movies1)
-
-movie_recommended <- moviedf[moviedf$movie_id %in% minimum,]
-movie_recommended <- subset(movie_recommended, select=c("movie_name"))
-movie_recommended <- as.list(movie_recommended)
-print(movie_recommended)
+recon(51)
 ```
 
 Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
