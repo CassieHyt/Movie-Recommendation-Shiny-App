@@ -23,49 +23,48 @@ ui <- dashboardPage(
     ))
   ,
   dashboardBody(
-     tabItems(
-       tabItem(tabName = "info",h2("About this app:...")),
-       tabItem(tabName = "top",
-               fluidRow(
-                 box(width = NULL,
-                     title = "Top 8 Movies",
-                     status = "danger",
-                     collapsible = TRUE,
-                     solidHeader = FALSE,
-                     background = "black",
-                     uiOutput("tiles")),
-                 box(title = "Top 50",
-                     status = "primary",
-                     solidHeader = TRUE,
-                     collapsible = TRUE,
-                     verbatimTextOutput("top50")),
-                 box(title = "Popular but bad movies",
-                     status = "success",
-                     solidHeader = T,
-                     verbatimTextOutput("pop_lrated")),
-                 box(title = "Not popular but great movies",
-                     status = "warning",
-                     solidHeader = T,
-                     verbatimTextOutput("nopop_hrated"))
-               )##end of fluidRow
-       )##end of tabItem
-       ,
-       tabItem(tabName = "words",h2("Mercury's"))
-       
-       
-       
-       
-       ,
-       tabItem(tabName = "MovieSearch", 
-               fluidRow(
-               sidebarSearchForm(textId = "searchText", 
-                                 buttonId = "searchButton",
-                                 label = "Search the Movie..."))
-               )
-     )
-
+    tabItems(
+      tabItem(tabName = "info",h2("About this app:...")),
+      tabItem(tabName = "top",
+              fluidRow(
+                box(width = NULL,
+                    title = "Top 8 Movies",
+                    status = "danger",
+                    collapsible = TRUE,
+                    solidHeader = FALSE,
+                    background = "black",
+                    uiOutput("tiles")),
+                box(title = "Top 50",
+                    status = "primary",
+                    solidHeader = TRUE,
+                    collapsible = TRUE,
+                    verbatimTextOutput("top50")),
+                box(title = "Popular but bad movies",
+                    status = "success",
+                    solidHeader = T,
+                    verbatimTextOutput("pop_lrated")),
+                box(title = "Not popular but great movies",
+                    status = "warning",
+                    solidHeader = T,
+                    verbatimTextOutput("nopop_hrated"))
+              )##end of fluidRow
+      )##end of tabItem
+      ,
+      tabItem(tabName = "words",h2("Mercury's"))
       
+      
+      
+      
+      ,
+      tabItem(tabName = "MovieSearch", 
+              fluidRow(
+                textAreaInput("MovieSearch.name", "Please Enter the Movie Name", "Star War", width = "1000px")
+              )
+      )
     )
+    
+    
+  )
 )
 
 
@@ -74,7 +73,7 @@ ui <- dashboardPage(
 
 
 
-  
+
 
 server <- function(input, output) { 
   output$tiles <- renderUI({
@@ -92,8 +91,29 @@ server <- function(input, output) {
   output$pop_lrated <- renderText({pop_lrated_s})
   output$nopop_hrated <- renderText({nopop_hrated_s})
   
+  output$MovieNetwork<-renderPlot({
+    Movie.index<-grep(input$movieSearch,label)
+    Rele.Movie.index<-MovieRec[Movie.index,]
+    
+    Movie.Net<-c(Movie.index,Rele.Movie.index)
+    Rele.Movie.index<-MovieRec[Movie.Net,]
+    Rele.Movie.index<-unique(as.vector(Rele.Movie.index))
+    
+    
+    suppressPackageStartupMessages(library(threejs, quietly=TRUE))
+    nodes.rec<-nodes[Rele.Movie.index,]
+    num<-paste("^",Movie.Net,"$",sep="")
+    ind<-sapply(num,grep,from)
+    ind<-unique(as.vector(ind))
+    edges.rec<-edges[ind,]
+    
+    
+    
+    
+    graphjs(edges.rec,nodes.rec)
+  })
   
   
-  }
+}
 
 shinyApp(ui, server)
