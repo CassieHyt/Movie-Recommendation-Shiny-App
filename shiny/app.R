@@ -50,7 +50,12 @@ ui <- dashboardPage(
                )##end of fluidRow
        )##end of tabItem
        ,
-       tabItem(tabName = "words",h2("Mercury's")),
+       tabItem(tabName = "words",h2("Mercury's"))
+       
+       
+       
+       
+       ,
        tabItem(tabName = "MovieSearch", 
                fluidRow(
                sidebarSearchForm(textId = "searchText", 
