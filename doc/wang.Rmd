@@ -5,6 +5,7 @@ output: html_notebook
 
 ##Step 1: Load data and libraries
 ```{r}
+if(!require(plyr)) install.packages("plyr")
 library(plyr)
 load("/Users/ouminamikun/Documents/Columbia/Spring 2017/ADS/final project/dat2.RData")
 dat <- dat2
