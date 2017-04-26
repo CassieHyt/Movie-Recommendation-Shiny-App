@@ -10,11 +10,14 @@ Try executing this chunk by clicking the *Run* button within the chunk or by pla
 ```{r}
 load("~/Spr2017-proj5-grp10/data/V.RData")
 load("~/Spr2017-proj5-grp10/data/movies1.RData")
-recon <- function(movie_id){
+recon <- function(movie_name_given){
+  moviedf <- as.data.frame(movies1, stringsAsFactors = FALSE)
+  movie_id_row = filter(moviedf, movie_name == movie_name_given)
+  movie_id_given = movie_id_row$movie_id
   
   distancelist <- list()
   for(i in 1:nrow(V_matrix)){
-    distance = (V_matrix[movie_id,] - V_matrix[i,])^2
+    distance = (V_matrix[movie_id_given,] - V_matrix[i,])^2
     distance = sum(distance)
     distancelist = append(distancelist, distance)
   }
@@ -23,15 +26,15 @@ recon <- function(movie_id){
   minimum = minimum - 1
   print(minimum)
   
-  moviedf <- as.data.frame(movies1)
-  
   movie_recommended <- moviedf[moviedf$movie_id %in% minimum,]
   movie_recommended <- subset(movie_recommended, select=c("movie_name"))
   movie_recommended <- as.list(movie_recommended)
   return(movie_recommended)
 }
 
-recon(51)
+recon("Star Wars ")
+
+
 ```
 
 Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
