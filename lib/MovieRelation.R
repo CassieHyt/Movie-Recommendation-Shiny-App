@@ -1,9 +1,7 @@
 
 
-setwd("C:/Users/yftang/Documents/GitHub/Spr2017-proj5-grp10/lib")
-
-ratings<-read.csv("../data/ratings.csv",header=F,col.names=c("user_id","movie_id","rating"))
-movies.ori<-read_tsv("../data/movies.txt")[[1]]
+ratings<-read.csv("../data/Movie rating/ratings.csv",header=F,col.names=c("user_id","movie_id","rating"))
+movies.ori<-read_tsv("../data/Movie rating/movies.txt")[[1]]
 movies.ori2<-c("Toy Story (1995)",movies.ori)
 time<-substr(movies.ori2,nchar(movies.ori2)-4,nchar(movies.ori2)-1)
 movie_name<-substr(movies.ori2,1,nchar(movies.ori2)-6)

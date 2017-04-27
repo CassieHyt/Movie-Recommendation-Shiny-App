@@ -13,20 +13,20 @@ library(lda)
 library(recharts)
 library(readr)
 library(omdbapi)
-setwd("C:/Users/yftang/Documents/GitHub/Spr2017-proj5-grp10/lib")
-source("information.R")
-source("rec.R")
-source("MovieRelation.R")
+setwd("/Users/jinruxue/Documents/ADS/Spr2017-proj5-grp10/shiny")
+source("../lib/information.R")
+source("../lib/rec.R")
+source("../lib/MovieRelation.R")
 
-load("C:/Users/yftang/Documents/GitHub/Spr2017-proj5-grp10/output/dat2.RData")
+load("../output/dat2.RData")
 dat <- dat2
 
-load("C:/Users/yftang/Documents/GitHub/Spr2017-proj5-grp10/data/label.RData")
-load("C:/Users/yftang/Documents/GitHub/Spr2017-proj5-grp10/data/MovieRec.RData")
-load("C:/Users/yftang/Documents/GitHub/Spr2017-proj5-grp10/output/wang_workspace.RData")
-load("C:/Users/yftang/Documents/GitHub/Spr2017-proj5-grp10/output/data_cloud.RData")
-load("C:/Users/yftang/Documents/GitHub/Spr2017-proj5-grp10/data/edges.RData")
-load("C:/Users/yftang/Documents/GitHub/Spr2017-proj5-grp10/data/nodes.RData")
+load("../data/label.RData")
+load("../data/MovieRec.RData")
+load("../output/wang_workspace.RData")
+load("../output/data_cloud.RData")
+load("../data/edges.RData")
+load("../data/nodes.RData")
 ui <- dashboardPage(
   dashboardHeader(title = "Movie Recommend"),
   dashboardSidebar(
