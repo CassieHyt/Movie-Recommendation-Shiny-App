@@ -71,8 +71,13 @@ graphjs(edges,nodes)
 
 
 ```{r}
+<<<<<<< HEAD
 input<-"Star War"
 Movie.index<-grep(input,label)
+=======
+input<-"Fierce Creatures"
+ Movie.index<-grep(input,label)
+>>>>>>> master
     Rele.Movie.index<-MovieRec[Movie.index,]
     
     Movie.Net<-c(Movie.index,Rele.Movie.index)
@@ -88,10 +93,17 @@ Movie.index<-grep(input,label)
     edges.rec<-edges[ind,]
     
     
+<<<<<<< HEAD
    
     
     graphjs(edges.rec,nodes.rec)
 
 
+=======
+    
+    
+    graphjs(edges.rec,nodes.rec)
+
+>>>>>>> master
 ```
 

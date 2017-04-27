@@ -14,7 +14,11 @@ recon <- function(movie_name_given){
   moviedf <- as.data.frame(movies1, stringsAsFactors = FALSE)
   movie_id_row = filter(moviedf, movie_name == movie_name_given)
   movie_id_given = movie_id_row$movie_id
+<<<<<<< HEAD
   
+=======
+  movie_id_given = as.numeric(movie_id_given) + 1
+>>>>>>> master
   distancelist <- list()
   for(i in 1:nrow(V_matrix)){
     distance = (V_matrix[movie_id_given,] - V_matrix[i,])^2
@@ -28,6 +32,7 @@ recon <- function(movie_name_given){
   
   movie_recommended <- moviedf[moviedf$movie_id %in% minimum,]
   movie_recommended <- subset(movie_recommended, select=c("movie_name"))
+<<<<<<< HEAD
   movie_recommended <- as.list(movie_recommended)
   return(movie_recommended)
 }
@@ -35,6 +40,12 @@ recon <- function(movie_name_given){
 recon("Star Wars ")
 
 
+=======
+  return(movie_recommended)
+}
+recon("Star Wars ")
+
+>>>>>>> master
 ```
 
 Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
