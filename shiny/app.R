@@ -20,7 +20,8 @@ dat <- dat2
 
 #load("/Users/jinruxue/Documents/ADS/Spr2017-proj5-grp10/output/wang.RData")
 load("/Users/jinruxue/Documents/ADS/Spr2017-proj5-grp10/output/data_cloud.RData")
-
+load("/Users/jinruxue/Documents/ADS/Spr2017-proj5-grp10/data/edges.RData")
+load("/Users/jinruxue/Documents/ADS/Spr2017-proj5-grp10/data/nodes.RData")
 ui <- dashboardPage(
   dashboardHeader(title = "Movie Recommend"),
   dashboardSidebar(
@@ -156,9 +157,6 @@ server <- function(input, output) {
     ind<-sapply(num,grep,from)
     ind<-unique(as.vector(ind))
     edges.rec<-edges[ind,]
-    
-    
-    
     
     graphjs(edges.rec,nodes.rec)
   })
