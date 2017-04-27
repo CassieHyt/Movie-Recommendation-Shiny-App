@@ -11,7 +11,7 @@ library(readr)
 library(omdbapi)
 library(lda)
 library(recharts)
-setwd("~/Documents/ADS/Spr2017-proj5-grp10/shiny")
+
 source("../lib/information.R")
 source("../lib/rec.R")
 
