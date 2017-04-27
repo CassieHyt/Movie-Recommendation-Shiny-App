@@ -1,3 +1,10 @@
+if(!require("circlize")) install.packages("circlize")
+if(!require("shiny")) install.packages("shiny")
+if(!require("shinydashboard")) install.packages("shinydashboard")
+if(!require("omdbapi")) install.packages("omdbapi")
+if(!require("rvest")) install.packages("rvest")
+if(!require("threejs")) install.packages("threejs")
+if(!require("RCurl")) install.packages("RCurl")
 library(shiny)
 library(shinydashboard)
 library(omdbapi)
@@ -11,6 +18,7 @@ library(readr)
 library(omdbapi)
 library(lda)
 library(recharts)
+library(threejs)
 setwd("~/Documents/ADS/Spr2017-proj5-grp10/shiny")
 source("../lib/information.R")
 source("../lib/rec.R")
@@ -66,52 +74,69 @@ ui <- dashboardPage(
               )##end of fluidRow
       )##end of tabItem
       ,
-      tabItem(tabName = "words",fluidRow(
-        
-        eWordcloud(data.cloud[[1]], 
-                   namevar = ~movie_name, 
-                   datavar = ~Freq,
-                   size = c(600, 600),
-                   title = "frequently rated movies - Comedy",
-                   rotationRange = c(0, 0)),
-        
-        eWordcloud(data.cloud[[2]], namevar = ~movie_name, datavar = ~Freq,size = c(600, 600),title = "frequently rated movies - Romance",rotationRange = c(0, 0)),
-        
-        
-        eWordcloud(data.cloud[[3]], namevar = ~movie_name, datavar = ~Freq,size = c(600, 600),title = "frequently rated movies - Thriller & Adventure",rotationRange = c(0, 0)),
-        
-        
-        eWordcloud(data.cloud[[4]], namevar = ~movie_name, datavar = ~Freq,size = c(600, 600),title = "frequently rated movies - Action & Crime",rotationRange = c(0, 0))
-        
-        
-      ))
+      tabItem(tabName = "words",
+              
+              
+              fluidPage(
+                
+                titlePanel("Recommend by Type"),
+                
+                navlistPanel(
+                  
+                  tabPanel(" Comedy",   eWordcloud(data.cloud[[1]], 
+                                                   namevar = ~movie_name, 
+                                                   datavar = ~Freq,
+                                                   size = c(600, 600),
+                                                   title = "frequently rated movies - Comedy",
+                                                   rotationRange = c(0, 0))
+                  ),
+                  tabPanel("Romance",   eWordcloud(data.cloud[[2]], 
+                                                   namevar = ~movie_name, 
+                                                   datavar = ~Freq,
+                                                   size = c(600, 600),
+                                                   title = "frequently rated movies - Romance",
+                                                   rotationRange = c(0, 0)) ),
+                  tabPanel("Thriller & Adventure",eWordcloud(data.cloud[[3]], 
+                                                             namevar = ~movie_name, 
+                                                             datavar = ~Freq,
+                                                             size = c(600, 600),
+                                                             title = "frequently rated movies - Thriller & Adventure",
+                                                             rotationRange = c(0, 0)) ),
+                  tabPanel("Action & Crime",eWordcloud(data.cloud[[4]], 
+                                                       namevar = ~movie_name, 
+                                                       datavar = ~Freq,
+                                                       size = c(600, 600),
+                                                       title = "frequently rated movies - Action & Crime",
+                                                       rotationRange = c(0, 0)) )
+                )
+              )
+              
+      )
       
       
       
       
       ,
-       tabItem(tabName = "MovieSearch", 
-               fluidRow(
-                  column(
-                    10, solidHeader = TRUE,
-                    textInput("text", "Give us a movie!", value ="Star Wars ")
-                    
-                  )
+      tabItem(tabName = "MovieSearch", 
+              fluidRow(
+                box(
+                  title = "Movie recommendation", solidHeader = TRUE,
+                  textInput("text", "Give us a movie!", value ="Star Wars "),
+                  width = 12
+                )
                 
-                 
-                 ,
-                 #graphOutput("MovieNetwork"),
-                 
-                 column(10,
-                        tableOutput("table")),
-                 column(10,graphOutput("MovieNetwork"))
+                ,
                 
-                 
+                box(title = "Movie We recommended",
+                    tableOutput("table"),height = 600),
                 
-               # , box(title="Network",graphOutput("MovieNetwork"))
-                 
-               )
-       )
+                box(title="NetWork",graphOutput("MovieNetwork"),height = 600),
+                
+                box(title="Movie Actors Relation",
+                    plotOutput("movie.actor"))
+                
+              )
+      )
       #tabItem(tabName = "MovieSearch",graphOutput("MovieNetwork"))
     )
     
@@ -189,7 +214,9 @@ server <- function(input, output) {
     graphjs(edges.rec,nodes.rec)
   })
   
-  
+  output$movie.actor<-renderPlot({
+    chordDiagram(data.movie.actor, transparency = 0.5)
+  })
   
 }
 
