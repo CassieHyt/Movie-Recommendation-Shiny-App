@@ -1,9 +1,9 @@
 library(shiny)
 library(shinydashboard)
 
-setwd("C:/Users/yftang/Documents/GitHub/Spr2017-proj5-grp10/lib")
+# setwd("C:/Users/yftang/Documents/GitHub/Spr2017-proj5-grp10/lib")
 
-source("rec.R")
+
 ui <- dashboardPage(
   dashboardHeader(title = "Movie Recommend"),
   dashboardSidebar(

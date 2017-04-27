@@ -1,8 +1,8 @@
 
-setwd("C:/Users/yftang/Documents/GitHub/Spr2017-proj5-grp10/data")
 
-load("V.RData")
-load("movies1.RData")
+
+load("/Users/jinruxue/Documents/ADS/Spr2017-proj5-grp10/data/V.RData")
+load("/Users/jinruxue/Documents/ADS/Spr2017-proj5-grp10/data/movies1.RData")
 recon <- function(movie_name_given){
   moviedf <- as.data.frame(movies1, stringsAsFactors = FALSE)
   movie_id_row = filter(moviedf, movie_name == movie_name_given)

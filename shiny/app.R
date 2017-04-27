@@ -13,12 +13,12 @@ library(lda)
 library(recharts)
 
 source("/Users/jinruxue/Documents/ADS/Spr2017-proj5-grp10/lib/information.R")
-
+source("/Users/jinruxue/Documents/ADS/Spr2017-proj5-grp10/lib/rec.R")
 
 load("/Users/jinruxue/Documents/ADS/Spr2017-proj5-grp10/output/dat2.RData")
 dat <- dat2
 
-load("/Users/jinruxue/Documents/ADS/Spr2017-proj5-grp10/output/wang.RData")
+#load("/Users/jinruxue/Documents/ADS/Spr2017-proj5-grp10/output/wang.RData")
 load("/Users/jinruxue/Documents/ADS/Spr2017-proj5-grp10/output/data_cloud.RData")
 
 ui <- dashboardPage(
@@ -86,7 +86,18 @@ ui <- dashboardPage(
       ,
       tabItem(tabName = "MovieSearch", 
               fluidRow(
-                textAreaInput("MovieSearch.name", "Please Enter the Movie Name", "Star War", width = "1000px")
+                box(
+                  title = "Movie recommendation", solidHeader = TRUE,
+                  textInput("text", "Give us a movie!", value ="Star Wars ")
+                  
+                )
+                
+                ,
+                
+                box(title = "Movie We recommended",
+                    tableOutput("table")),
+                plotOutput("MovieNetwork")
+                
               )
       )
     )
@@ -118,9 +129,20 @@ server <- function(input, output) {
   # output$top50 <- renderText({top50_s })
   # output$pop_lrated <- renderText({pop_lrated_s})
   # output$nopop_hrated <- renderText({nopop_hrated_s})
+  moviename <- reactive({
+    input$text
+  })
+  
+  # output$movie <- renderText({
+  #    as.vector(unlist(recon(moviename())))
+  # })
+  
+  output$table<-renderTable({
+    as.vector(unlist(recon(moviename())))
+  })
   
   output$MovieNetwork<-renderPlot({
-    Movie.index<-grep(input$movieSearch,label)
+    Movie.index<-grep(substr(moviename,start = 1,stop=(nchar(moviename)-1)),label)
     Rele.Movie.index<-MovieRec[Movie.index,]
     
     Movie.Net<-c(Movie.index,Rele.Movie.index)
@@ -140,6 +162,7 @@ server <- function(input, output) {
     
     graphjs(edges.rec,nodes.rec)
   })
+  
   
   
 }
