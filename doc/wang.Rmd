@@ -274,7 +274,7 @@ server <- function(input, output){
     )
    })##end of renderUI
    
-   output$top50 <- renderText({ 
+   output$top50 <- renderUI({ 
      lapply(top50_df$top50[1:22], function(j){
         br(a(top50_df$top50[j], href = top50_df$imbdLink[top50_df$top50 == j], target = "_blank"))
       })
