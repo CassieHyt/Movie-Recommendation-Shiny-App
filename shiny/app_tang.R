@@ -66,23 +66,44 @@ ui <- dashboardPage(
               )##end of fluidRow
       )##end of tabItem
       ,
-      tabItem(tabName = "words",fluidRow(
-        
-        eWordcloud(data.cloud[[1]], 
-                   namevar = ~movie_name, 
-                   datavar = ~Freq,
-                   size = c(600, 600),
-                   title = "frequently rated movies - Comedy",
-                   rotationRange = c(0, 0)),
-        
-        eWordcloud(data.cloud[[2]], namevar = ~movie_name, datavar = ~Freq,size = c(600, 600),title = "frequently rated movies - Romance",rotationRange = c(0, 0)),
-      
-        eWordcloud(data.cloud[[3]], namevar = ~movie_name, datavar = ~Freq,size = c(600, 600),title = "frequently rated movies - Thriller & Adventure",rotationRange = c(0, 0)),
-  
-        eWordcloud(data.cloud[[4]], namevar = ~movie_name, datavar = ~Freq,size = c(600, 600),title = "frequently rated movies - Action & Crime",rotationRange = c(0, 0))
-        
-        
-      ))
+      tabItem(tabName = "words",
+              
+              
+              fluidPage(
+                
+                titlePanel("Recommend by Type"),
+                
+                navlistPanel(
+                  
+                  tabPanel(" Comedy",   eWordcloud(data.cloud[[1]], 
+                                        namevar = ~movie_name, 
+                                        datavar = ~Freq,
+                                        size = c(600, 600),
+                                        title = "frequently rated movies - Comedy",
+                                        rotationRange = c(0, 0))
+                           ),
+                  tabPanel("Romance",   eWordcloud(data.cloud[[2]], 
+                                                  namevar = ~movie_name, 
+                                                  datavar = ~Freq,
+                                                  size = c(600, 600),
+                                                  title = "frequently rated movies - Romance",
+                                                  rotationRange = c(0, 0)) ),
+                  tabPanel("Thriller & Adventure",eWordcloud(data.cloud[[3]], 
+                                              namevar = ~movie_name, 
+                                              datavar = ~Freq,
+                                              size = c(600, 600),
+                                              title = "frequently rated movies - Thriller & Adventure",
+                                              rotationRange = c(0, 0)) ),
+                  tabPanel("Action & Crime",eWordcloud(data.cloud[[4]], 
+                                              namevar = ~movie_name, 
+                                              datavar = ~Freq,
+                                              size = c(600, 600),
+                                              title = "frequently rated movies - Action & Crime",
+                                              rotationRange = c(0, 0)) )
+                )
+              )
+     
+      )
       
       
       
