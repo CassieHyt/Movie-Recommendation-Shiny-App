@@ -36,12 +36,35 @@ for(i in 2:length(pop_lrated)){
   pop_lrated_s <- paste(pop_lrated_s, pop_lrated[i], sep = "\n")
 }
 
+
 nopop_hrated_s <- nopop_hrated[1]
 for(i in 2:length(nopop_hrated)){
   nopop_hrated_s <- paste(nopop_hrated_s, nopop_hrated[i],sep = "\n")
 }
 ```
 
+
+```{r}
+########### DON'T RUN THIS AGAIN
+pop_lrated <- read.csv("/Users/ouminamikun/Documents/Columbia/Spring 2017/ADS/Spr2017-proj5-grp10/output/pop_lrated.csv")
+
+pop_id <- NULL
+for(i in 1:10){
+  pop_id[i] <- search_by_title(trimws(pop_lrated$x[i]))$imdbID[1]
+}
+pop_link <- paste("http://www.imdb.com/title/", pop_id, "/", sep = "")
+pop_lrated$link <- pop_link
+
+nopop_hrated <- read.csv("/Users/ouminamikun/Documents/Columbia/Spring 2017/ADS/Spr2017-proj5-grp10/output/nopop_hrated.csv")
+nopop_id <- NULL
+for(i in 1:10){
+  nopop_id[i] <- search_by_title(trimws(nopop_hrated$x[i]))$imdbID[1]
+}
+nopop_link <- paste("http://www.imdb.com/title/", nopop_id, "/", sep = "")
+nopop_hrated$link <- nopop_link
+write.csv(pop_lrated, "pop_lrate_link.csv", row.names = F)
+write.csv(nopop_hrated,"nopop_hrated_link.csv", row.names = F)
+```
 
 ```{r}
 
@@ -73,6 +96,8 @@ top50_df$poster <- poster
 top50_df$imbdLink <- imdbLink
 
 write.csv(top50_df, "top50_df.csv", row.names = F)
+write.csv(pop_lrated, "pop_lrated.csv", row.names = F)
+write.csv(nopop_hrated, "nopop_hrated.csv", row.names = F)
 ```
 
 ## Poster
@@ -179,8 +204,6 @@ server <- function(input, output) {
   output$top3 <- renderPlot({showposter("Legends of the Fall")})
   output$top4 <- renderPlot({showposter("Mighty Aphroditee")})
   output$top5 <- renderPlot({showposter("Snow White and the Seven Dwarfs ")})
-  
-  
   }
 
 shinyApp(ui = ui, server = server)
@@ -190,6 +213,7 @@ shinyApp(ui = ui, server = server)
 ## Shiny app version 2
 ```{r}
 library(omdbapi)
+library(plyr)
 library(dplyr)
 library(rvest)
 library(RCurl)
@@ -198,14 +222,10 @@ library(shinyBS)
 library(shiny)
 library(shinydashboard)
 
-load("../output/dat2.RData")
-dat <- dat2
-load("../output/top50_df.RData")
-load("../output/wang.RData")
+load("../output/wang_workspace.RData") ##load workspace
 
 ui <- dashboardPage(
   dashboardHeader(),
-  
   dashboardSidebar(
     sidebarMenu(
       menuItem("Movies", tabName = "movies",icon = icon("film", lib="font-awesome") )
@@ -222,7 +242,7 @@ ui <- dashboardPage(
                     solidHeader = FALSE,
                     background = "black",
                     uiOutput("tiles")),
-                box(title = "Top 50",
+                box(title = "Top 22",
                     status = "primary",
                     solidHeader = TRUE,
                     collapsible = TRUE,
@@ -230,11 +250,11 @@ ui <- dashboardPage(
                 box(title = "Popular but bad movies",
                     status = "success",
                     solidHeader = T,
-                    verbatimTextOutput("pop_lrated")),
+                    uiOutput("pop_lrated")),
                 box(title = "Not popular but great movies",
                     status = "warning",
                     solidHeader = T,
-                    verbatimTextOutput("nopop_hrated"))
+                    uiOutput("nopop_hrated"))
                 )##end of fluidRow
               )##end of tabItem
       
@@ -254,13 +274,23 @@ server <- function(input, output){
     )
    })##end of renderUI
    
-   output$top50 <- renderUI({ lapply(top50_df$top50[1:20], function(j){
-     br(a(top50_df$top50[j], href = top50_df$imbdLink[top50_df$top50==j], target = "_blank"))
-   } ) })
-    output$pop_lrated <- renderText({pop_lrated_s})
-    output$nopop_hrated <- renderText({nopop_hrated_s})
+   output$top50 <- renderText({ 
+     lapply(top50_df$top50[1:22], function(j){
+        br(a(top50_df$top50[j], href = top50_df$imbdLink[top50_df$top50 == j], target = "_blank"))
+      })
+     })##end of renderUI
+   
+    output$pop_lrated <- renderUI({
+      lapply(pop_lrated$x[1:10], function(m){
+        br(a(pop_lrated$x[m], href = pop_lrated$link[pop_lrated$x == m], target = "_blank"))
+      })
+    })
+    output$nopop_hrated <- renderUI({
+      lapply(nopop_hrated$x[1:10], function(n){
+        br(a(nopop_hrated$x[n], href = nopop_hrated$link[nopop_hrated$x == n], target = "_blank"))
+      })
+    })
 }
-
 shinyApp(ui, server )
 ```
 
