@@ -11,17 +11,22 @@ library(readr)
 library(omdbapi)
 library(lda)
 library(recharts)
+setwd("~/Documents/ADS/Spr2017-proj5-grp10/shiny")
+source("../lib/information.R")
+source("../lib/rec.R")
 
-source("/Users/jinruxue/Documents/ADS/Spr2017-proj5-grp10/lib/information.R")
-source("/Users/jinruxue/Documents/ADS/Spr2017-proj5-grp10/lib/rec.R")
-
-load("/Users/jinruxue/Documents/ADS/Spr2017-proj5-grp10/output/dat2.RData")
+load("../output/dat2.RData")
 dat <- dat2
 
-load("/Users/jinruxue/Documents/ADS/Spr2017-proj5-grp10/output/wang_workspace.RData")
-load("/Users/jinruxue/Documents/ADS/Spr2017-proj5-grp10/output/data_cloud.RData")
-load("/Users/jinruxue/Documents/ADS/Spr2017-proj5-grp10/data/edges.RData")
-load("/Users/jinruxue/Documents/ADS/Spr2017-proj5-grp10/data/nodes.RData")
+load("../output/wang_workspace.RData")
+load("../output/data_cloud.RData")
+load("../data/edges.RData")
+load("../data/nodes.RData")
+load("../data/nodes.RData")
+load("../data/MovieRec.Rdata")
+load("../data/label.Rdata")
+
+
 ui <- dashboardPage(
   dashboardHeader(title = "Movie Recommend"),
   dashboardSidebar(
@@ -85,23 +90,29 @@ ui <- dashboardPage(
       
       
       ,
-      tabItem(tabName = "MovieSearch", 
-              fluidRow(
-                box(
-                  title = "Movie recommendation", solidHeader = TRUE,
-                  textInput("text", "Give us a movie!", value ="Star Wars ")
-                  
-                )
+       tabItem(tabName = "MovieSearch", 
+               fluidRow(
+                  column(
+                    10, solidHeader = TRUE,
+                    textInput("text", "Give us a movie!", value ="Star Wars ")
+                    
+                  )
                 
-                ,
+                 
+                 ,
+                 #graphOutput("MovieNetwork"),
+                 
+                 column(10,
+                        tableOutput("table")),
+                 column(10,graphOutput("MovieNetwork"))
                 
-                box(title = "Movie We recommended",
-                    tableOutput("table")),
+                 
                 
-                box(title="NetWork",plotOutput("MovieNetwork"))
-                
-              )
-      )
+               # , box(title="Network",graphOutput("MovieNetwork"))
+                 
+               )
+       )
+      #tabItem(tabName = "MovieSearch",graphOutput("MovieNetwork"))
     )
     
     
@@ -159,8 +170,8 @@ server <- function(input, output) {
     as.vector(unlist(recon(moviename())))
   })
   
-  output$MovieNetwork<-renderPlot({
-    Movie.index<-grep(substr(moviename(),start = 1,stop=(nchar(moviename)-1)),label)
+  output$MovieNetwork<-renderGraph({
+    Movie.index<-grep(substr(moviename(),start = 1,stop=(nchar(moviename())-1)),label)
     Rele.Movie.index<-MovieRec[Movie.index,]
     
     Movie.Net<-c(Movie.index,Rele.Movie.index)
@@ -171,7 +182,7 @@ server <- function(input, output) {
     suppressPackageStartupMessages(library(threejs, quietly=TRUE))
     nodes.rec<-nodes[Rele.Movie.index,]
     num<-paste("^",Movie.Net,"$",sep="")
-    ind<-sapply(num,grep,from)
+    ind<-sapply(num,grep,edges$from)
     ind<-unique(as.vector(ind))
     edges.rec<-edges[ind,]
     
