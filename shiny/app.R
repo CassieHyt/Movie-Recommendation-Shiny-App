@@ -18,7 +18,7 @@ source("/Users/jinruxue/Documents/ADS/Spr2017-proj5-grp10/lib/rec.R")
 load("/Users/jinruxue/Documents/ADS/Spr2017-proj5-grp10/output/dat2.RData")
 dat <- dat2
 
-#load("/Users/jinruxue/Documents/ADS/Spr2017-proj5-grp10/output/wang.RData")
+load("/Users/jinruxue/Documents/ADS/Spr2017-proj5-grp10/output/wang_workspace.RData")
 load("/Users/jinruxue/Documents/ADS/Spr2017-proj5-grp10/output/data_cloud.RData")
 load("/Users/jinruxue/Documents/ADS/Spr2017-proj5-grp10/data/edges.RData")
 load("/Users/jinruxue/Documents/ADS/Spr2017-proj5-grp10/data/nodes.RData")
@@ -45,19 +45,19 @@ ui <- dashboardPage(
                     solidHeader = FALSE,
                     background = "black",
                     uiOutput("tiles")),
-                box(title = "Top 50",
+                box(title = "Top 22",
                     status = "primary",
                     solidHeader = TRUE,
                     collapsible = TRUE,
-                    verbatimTextOutput("top50")),
+                    uiOutput("top50")),
                 box(title = "Popular but bad movies",
                     status = "success",
                     solidHeader = T,
-                    verbatimTextOutput("pop_lrated")),
+                    uiOutput("pop_lrated")),
                 box(title = "Not popular but great movies",
                     status = "warning",
                     solidHeader = T,
-                    verbatimTextOutput("nopop_hrated"))
+                    uiOutput("nopop_hrated"))
               )##end of fluidRow
       )##end of tabItem
       ,
@@ -97,7 +97,8 @@ ui <- dashboardPage(
                 
                 box(title = "Movie We recommended",
                     tableOutput("table")),
-                plotOutput("MovieNetwork")
+                
+                box(title="NetWork",plotOutput("MovieNetwork"))
                 
               )
       )
@@ -116,20 +117,36 @@ ui <- dashboardPage(
 
 
 server <- function(input, output) { 
-  # output$tiles <- renderUI({
-  #   fluidRow(
-  #     lapply(top50_df$poster[1:8], function(i) {
-  #       a(box(width=3,
-  #             title = img(src = i, height = 350, width = 250),
-  #             footer = top50_df$top50[top50_df$poster == i]
-  #       ), href= top50_df$imbdLink[top50_df$poster == i] , target="_blank")
-  #     }) ##end of lappy
-  #   )
-  # })##end of renderUI
+  output$tiles <- renderUI({
+    fluidRow(
+      lapply(top50_df$poster[1:8], function(i) {
+        a(box(width=3,
+              title = img(src = i, height = 350, width = 250),
+              footer = top50_df$top50[top50_df$poster == i]
+        ), href= top50_df$imbdLink[top50_df$poster == i] , target="_blank")
+      }) ##end of lappy
+    )
+  })##end of renderUI
   
-  # output$top50 <- renderText({top50_s })
-  # output$pop_lrated <- renderText({pop_lrated_s})
-  # output$nopop_hrated <- renderText({nopop_hrated_s})
+  output$top50 <- renderUI({ 
+    lapply(top50_df$top50[1:22], function(j){
+      br(a(top50_df$top50[j], href = top50_df$imbdLink[top50_df$top50 == j], target = "_blank"))
+    })
+  })##end of renderUI
+  
+  output$pop_lrated <- renderUI({
+    lapply(pop_lrated$x[1:10], function(m){
+      br(a(pop_lrated$x[m], href = pop_lrated$link[pop_lrated$x == m], target = "_blank"))
+    })
+  })
+  output$nopop_hrated <- renderUI({
+    lapply(nopop_hrated$x[1:10], function(n){
+      br(a(nopop_hrated$x[n], href = nopop_hrated$link[nopop_hrated$x == n], target = "_blank"))
+    })
+  })
+  
+  
+  
   moviename <- reactive({
     input$text
   })
@@ -143,7 +160,7 @@ server <- function(input, output) {
   })
   
   output$MovieNetwork<-renderPlot({
-    Movie.index<-grep(substr(moviename,start = 1,stop=(nchar(moviename)-1)),label)
+    Movie.index<-grep(substr(moviename(),start = 1,stop=(nchar(moviename)-1)),label)
     Rele.Movie.index<-MovieRec[Movie.index,]
     
     Movie.Net<-c(Movie.index,Rele.Movie.index)
