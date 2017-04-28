@@ -10,7 +10,7 @@ Term: Spring 2017
 	+ Yitong Hu
 	+ Nanjun Wang
 	+ Yifei Tang
-+ Project summary: In this project, we build a movie recommendation App based on the OMBD dataset.
++ Project summary: In this project, we build a movie recommendation App(https://adsproject5group10.shinyapps.io/moviebeats/) based on the OMBD dataset.
 	
 **Contribution statement**: ([default](doc/a_note_on_contributions.md)) All team members contributed equally in all stages of this project. All team members approve our work presented in this GitHub repository including this contributions statement. 
 
